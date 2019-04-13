@@ -88,7 +88,7 @@ public:
    *
    * @return either 0 - indicates source segment or 1 - indicates sink segment
    */
-  virtual bool which_segment(nodeid s) = 0;
+  virtual bool what_segment(nodeid s) = 0;
 };
 
 } // namespace maxflowlib

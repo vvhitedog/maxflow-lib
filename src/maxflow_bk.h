@@ -49,7 +49,7 @@ private:
 
 public:
   /**
-   * @brief Graph class constructor
+   * @brief GraphBk class constructor
    *
    * @param nnode number of nodes in the graph
    * @param narc  number of arcs in the graph
@@ -97,7 +97,7 @@ public:
    *
    * @return either 0 - indicates source segment or 1 - indicates sink segment
    */
-  bool which_segment(nodeid s) {
+  bool what_segment(nodeid s) {
     return m_graph.what_segment(s) == GraphImpl::SINK;
   }
 };
