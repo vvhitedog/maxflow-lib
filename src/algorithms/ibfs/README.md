@@ -1,4 +1,6 @@
-# ABOUT
+#IBFS
+
+## ABOUT
 <pre>
   IBFSGraph -  Software for solving                    
               Maximum s-t Flow / Minimum s-t Cut      
@@ -25,7 +27,7 @@ and from
 	2011
 </pre>
 
-# LICENSE
+## LICENSE
 This software can be used for research purposes only.
 If you use this software for research purposes, you should cite the aforementioned papers
 in any resulting publication and appropriately credit it.
