@@ -1,16 +1,14 @@
 # ABOUT
-\#########################################################
-\#                                                       #
-\#  IBFSGraph -  Software for solving                    #
-\#               Maximum s-t Flow / Minimum s-t Cut      #
-\#               using the IBFS algorithm                #
-\#                                                       #
-\#  http://www.cs.tau.ac.il/~sagihed/ibfs/               #
-\#                                                       #
-\#  Haim Kaplan (haimk@cs.tau.ac.il)                     #
-\#  Sagi Hed (sagihed@post.tau.ac.il)                    #
-\#                                                       #
-\#########################################################
+
+  IBFSGraph -  Software for solving                    
+               Maximum s-t Flow / Minimum s-t Cut      
+              using the IBFS algorithm                
+                                                       
+  http://www.cs.tau.ac.il/~sagihed/ibfs/               
+                                                       
+  Haim Kaplan (haimk@cs.tau.ac.il)                     
+  Sagi Hed (sagihed@post.tau.ac.il)                    
+                                                       
 
 This software implements the IBFS (Incremental Breadth First Search) maximum flow algorithm from
 	"Faster and More Dynamic Maximum Flow
