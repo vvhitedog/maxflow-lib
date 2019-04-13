@@ -1,9 +1,9 @@
-#include "maxflow_ibfs.h"
+#include "maxflow_bk.h"
 #include <iostream>
 
 int main () {
 
-  maxflowlib::GraphIBFS<> g(2,1);
+  maxflowlib::GraphBk<> g(2,1);
   g.add_tweights( 0,   /* capacities */  1, 5 );
   g.add_tweights( 1,   /* capacities */  2, 6 );
   g.add_arc( 0, 1,    /* capacities */  3, 4 );
