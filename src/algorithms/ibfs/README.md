@@ -1,4 +1,4 @@
-#ABOUT
+# ABOUT
 \#########################################################
 \#                                                       #
 \#  IBFSGraph -  Software for solving                    #
@@ -26,7 +26,7 @@ and from
 	ISBN 978-3-642-23718-8
 	2011
 
-#LICENSE
+# LICENSE
 This software can be used for research purposes only.
 If you use this software for research purposes, you should cite the aforementioned papers
 in any resulting publication and appropriately credit it.
