@@ -1,7 +1,7 @@
 # ABOUT
-
+<code>
   IBFSGraph -  Software for solving                    
-               Maximum s-t Flow / Minimum s-t Cut      
+              Maximum s-t Flow / Minimum s-t Cut      
               using the IBFS algorithm                
                                                        
   http://www.cs.tau.ac.il/~sagihed/ibfs/               
@@ -23,6 +23,7 @@ and from
 	In Proceedings of the 19th European conference on Algorithms, ESA'11, pages 457-468.
 	ISBN 978-3-642-23718-8
 	2011
+</code>
 
 # LICENSE
 This software can be used for research purposes only.
