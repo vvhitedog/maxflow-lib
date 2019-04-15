@@ -24,6 +24,7 @@
  *
  */
 #ifndef MAXFLOWLIB_MAXFLOW_BK_H
+#define MAXFLOWLIB_MAXFLOW_BK_H
 
 #include "algorithms/bk/graph.h"
 #include "maxflow.h"
@@ -33,11 +34,12 @@ using GraphImplType = Graph<cap, tcap, flow>;
 
 namespace maxflowlib {
 
-template <typename _nodeid = int, typename _arcid = int, typename _cap = int, typename _flow = int>
-class GraphBk {};
+template <typename _nodeid = int, typename _arcid = int, typename _cap = int,
+          typename _flow = int>
+class GraphBK {};
 
 template <typename _cap, typename _flow>
-class GraphBk<int,int,_cap,_flow> : public Graph<int, int, _cap, _flow> {
+class GraphBK<int, int, _cap, _flow> : public Graph<int, int, _cap, _flow> {
 
 public:
   typedef Graph<int, int, _cap, _flow> BaseGraph;
@@ -57,7 +59,7 @@ public:
    * @param nnode number of nodes in the graph
    * @param narc  number of arcs in the graph
    */
-  GraphBk(nodeid nnode, arcid narc)
+  GraphBK(nodeid nnode, arcid narc)
       : BaseGraph(nnode, narc), m_graph(nnode, narc) {
     m_graph.add_node(BaseGraph::m_nnode);
   }

@@ -16,7 +16,8 @@
  *
  * @file maxflow_ibfs.h
  *
- * @brief Implementation of maxflow interface using the IBFS algorithm (with excess scaling)
+ * @brief Implementation of maxflow interface using the IBFS algorithm (with
+ * excess scaling)
  *
  * @author Matt Gara
  *
@@ -24,6 +25,7 @@
  *
  */
 #ifndef MAXFLOWLIB_MAXFLOW_IBFS_H
+#define MAXFLOWLIB_MAXFLOW_IBFS_H
 
 #include "algorithms/ibfs/ibfs.h"
 #include "maxflow.h"
@@ -32,11 +34,12 @@ using GraphImplType = IBFSGraph;
 
 namespace maxflowlib {
 
-template <typename _nodeid = int, typename _arcid = int, typename _cap = int, typename _flow = int>
+template <typename _nodeid = int, typename _arcid = int, typename _cap = int,
+          typename _flow = int>
 class GraphIBFS {};
 
 template <>
-class GraphIBFS<int,int,int,int> : public Graph<int,int,int,int> {
+class GraphIBFS<int, int, int, int> : public Graph<int, int, int, int> {
 
 public:
   typedef Graph<int, int, int, int> BaseGraph;
@@ -58,7 +61,7 @@ public:
    */
   GraphIBFS(nodeid nnode, arcid narc)
       : BaseGraph(nnode, narc), m_graph(IBFSGraph::IB_INIT_COMPACT) {
-    m_graph.initSize(nnode,narc);
+    m_graph.initSize(nnode, narc);
   }
 
   /**
@@ -71,7 +74,7 @@ public:
    * @param rcap capacity of reverse arc
    */
   void add_arc(nodeid s, nodeid t, cap fcap, cap rcap) {
-    m_graph.addEdge(s,t,fcap,rcap);
+    m_graph.addEdge(s, t, fcap, rcap);
   }
 
   /**
@@ -82,7 +85,7 @@ public:
    * @param tcap capacity of arc node -> sink
    */
   virtual void add_tweights(nodeid s, cap scap, cap tcap) {
-      m_graph.addNode(s,scap,tcap);
+    m_graph.addNode(s, scap, tcap);
   }
 
   /**
@@ -90,7 +93,10 @@ public:
    *
    * @return the maxflow
    */
-  flow maxflow() { return m_graph.computeMaxFlow(); }
+  flow maxflow() {
+    m_graph.initGraph();
+    return m_graph.computeMaxFlow();
+  }
 
   /**
    * @brief Return which segment a node belongs to in the minimum cut
@@ -99,9 +105,7 @@ public:
    *
    * @return either 0 - indicates source segment or 1 - indicates sink segment
    */
-  bool what_segment(nodeid s) {
-    return m_graph.what_segment(s);
-  }
+  bool what_segment(nodeid s) { return m_graph.what_segment(s); }
 };
 
 } // namespace maxflowlib

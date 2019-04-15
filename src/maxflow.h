@@ -24,6 +24,7 @@
  *
  */
 #ifndef MAXFLOWLIB_MAXFLOW_H
+#define MAXFLOWLIB_MAXFLOW_H
 
 namespace maxflowlib {
 

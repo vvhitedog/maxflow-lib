@@ -171,7 +171,7 @@ public:
 		return arcEnd-arcs;
 	}
 	int isNodeOnSrcSide(int nodeIndex, int freeNodeValue = 0);
-    int what_segment(int nodeIndex);
+  int what_segment(int nodeIndex);
 
 
 	struct Node;
@@ -741,9 +741,6 @@ inline int IBFSGraph::isNodeOnSrcSide(int nodeIndex, int freeNodeValue)
 }
 
 
-
-
 #endif
-
 
 
