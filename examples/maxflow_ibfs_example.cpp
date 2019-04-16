@@ -4,8 +4,8 @@
 int main () {
 
   maxflowlib::GraphIBFS<> g(2,1);
-  g.add_tweights( 0,   /* capacities */  4, 0 );
-  g.add_tweights( 1,   /* capacities */  0, 6 );
+  g.set_tweights( 0,   /* capacities */  4, 0 );
+  g.set_tweights( 1,   /* capacities */  0, 6 );
   g.add_arc( 0, 1,    /* capacities */  3, 0 );
 
   int flow = g.maxflow();

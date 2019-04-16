@@ -25,6 +25,7 @@
  */
 #ifndef MAXFLOWLIB_MAXFLOW_H
 #define MAXFLOWLIB_MAXFLOW_H
+#include <stdexcept>
 
 namespace maxflowlib {
 
@@ -73,7 +74,16 @@ public:
    * @param scap capacity of arc source -> node
    * @param tcap capacity of arc node -> sink
    */
-  virtual void add_tweights(nodeid s, cap scap, cap tcap) = 0;
+  virtual void set_tweights(nodeid s, cap scap, cap tcap) = 0;
+
+  /**
+   * @brief Compute the pseudoflow.
+   *
+   * @return the maxflow
+   */
+  virtual flow pseudoflow() {
+    throw std::logic_error("This algorithm does not support pseudoflows, do not use.");
+  }
 
   /**
    * @brief Compute the maxflow

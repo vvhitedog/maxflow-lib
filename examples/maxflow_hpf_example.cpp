@@ -1,13 +1,14 @@
-#include "maxflow_bk.h"
+#include "maxflow_hpf.h"
 #include <iostream>
 
 int main () {
 
-  maxflowlib::GraphBK<> g(2,1);
+  maxflowlib::GraphHPF<> g(2,1);
   g.set_tweights( 0,   /* capacities */  4, 0 );
   g.set_tweights( 1,   /* capacities */  0, 6 );
   g.add_arc( 0, 1,    /* capacities */  3, 0 );
 
+  g.pseudoflow();
   int flow = g.maxflow();
   std::cout << " the flow computed was: " << flow << std::endl;
 

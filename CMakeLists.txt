@@ -23,33 +23,44 @@
 # @date 2019-04-14
 #
 #
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required(VERSION 2.8)
 
 set(PROJECT_VERSION 1.0.0)
 
-project(maxflow-lib VERSION ${PROJECT_VERSION} DESCRIPTION "Performant maxflow algorithms under common interface.")
+if (VERSION GREATER 2.8)
+  project(maxflow-lib VERSION ${PROJECT_VERSION} DESCRIPTION "Performant maxflow algorithms under common interface.")
+else ()
+  project(maxflow-lib)
+endif ()
 
 include(GNUInstallDirs)
 
-set(CMAKE_CXX_STANDARD 11)
+# Set standard to c++11
+if (VERSION GREATER 2.8)
+  set(CMAKE_CXX_STANDARD 11)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
+else ()
+  ADD_DEFINITIONS( -std=c++11 )
+endif ()
 
 # Setup maxflow-library
 set(MAXFLOWLIB_SRC src/)
-set(BK_SRCS ${MAXFLOWLIB_SRC}/algorithms/bk/maxflow.cpp ${MAXFLOWLIB_SRC}/algorithms/bk/graph.cpp )
+set(BK_SRCS ${MAXFLOWLIB_SRC}/algorithms/bk/maxflow.cpp ${MAXFLOWLIB_SRC}/algorithms/bk/graph.cpp)
 set(IBFS_SRCS ${MAXFLOWLIB_SRC}/algorithms/ibfs/ibfs.cpp)
-set(LIB_SRCS ${BK_SRCS} ${IBFS_SRCS} )
+set(HPF_SRCS ${MAXFLOWLIB_SRC}/algorithms/hpf/pseudo.cpp)
+set(LIB_SRCS ${BK_SRCS} ${IBFS_SRCS} ${HPF_SRCS} )
 set(MAXFLOWLIB_HEADERS ${MAXFLOWLIB_SRC}/maxflow.h ${MAXFLOWLIB_SRC}/maxflow_bk.h ${MAXFLOWLIB_SRC}/maxflow_ibfs.h)
 set(LIB_HEADERS ${MAXFLOWLIB_HEADERS} ${MAXFLOWLIB_SRC}/algorithms/bk/block.h ${MAXFLOWLIB_SRC}/algorithms/bk/graph.h)
 add_library(maxflow SHARED ${LIB_SRCS} ${LIB_HEADERS})
 target_include_directories(maxflow PRIVATE ${MAXFLOWLIB_SRC})
 # Install setup:
 set_target_properties(maxflow PROPERTIES
-    VERSION ${PROJECT_VERSION}
-    SOVERSION 1
-    PUBLIC_HEADER "${MAXFLOWLIB_HEADERS}")
+  VERSION ${PROJECT_VERSION}
+  SOVERSION 1
+  PUBLIC_HEADER "${MAXFLOWLIB_HEADERS}")
 install(TARGETS maxflow
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/maxflowlib )
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/maxflowlib )
 
 # Compile the BK example
 set(BK_EXE_SRCS examples/maxflow_bk_example.cpp)
@@ -62,3 +73,9 @@ set(IBFS_EXE_SRCS examples/maxflow_ibfs_example.cpp)
 add_executable(maxflow_ibfs_example ${IBFS_EXE_SRCS})
 target_include_directories(maxflow_ibfs_example PRIVATE ${MAXFLOWLIB_SRC})
 target_link_libraries(maxflow_ibfs_example maxflow)
+
+# Compile the HPF example
+set(HPF_EXE_SRCS examples/maxflow_hpf_example.cpp)
+add_executable(maxflow_hpf_example ${HPF_EXE_SRCS})
+target_include_directories(maxflow_hpf_example PRIVATE ${MAXFLOWLIB_SRC})
+target_link_libraries(maxflow_hpf_example maxflow)

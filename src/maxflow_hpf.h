@@ -14,54 +14,52 @@
  *  You should have received a copy of the GNU General Public License
  *  along with maxflow-lib.  If not, see <https://www.gnu.org/licenses/>.
  *
- * @file maxflow_bk.h
+ * @file maxflow_hpf.h
  *
- * @brief Implementation of maxflow interface using the BK algorithm
+ * @brief Implementation of maxflow interface using the HPF algorithm
  *
  * @author Matt Gara
  *
- * @date 2019-04-13
+ * @date 2019-04-15
  *
  */
-#ifndef MAXFLOWLIB_MAXFLOW_BK_H
-#define MAXFLOWLIB_MAXFLOW_BK_H
+#ifndef MAXFLOWLIB_MAXFLOW_HPF_H
+#define MAXFLOWLIB_MAXFLOW_HPF_H
 
-#include "algorithms/bk/graph.h"
+#include "algorithms/hpf/pseudo.h"
 #include "maxflow.h"
-
-template <typename cap, typename tcap, typename flow>
-using GraphImplType = Graph<cap, tcap, flow>;
+#include <stdexcept>
 
 namespace maxflowlib {
 
 template <typename _nodeid = int, typename _arcid = int, typename _cap = int,
           typename _flow = int>
-class GraphBK {};
+class GraphHPF {};
 
-template <typename _cap, typename _flow>
-class GraphBK<int, int, _cap, _flow> : public Graph<int, int, _cap, _flow> {
+template <>
+class GraphHPF<int, int, int, int> : public Graph<int, int, int, int> {
 
 public:
-  typedef Graph<int, int, _cap, _flow> BaseGraph;
-  typedef GraphImplType<_cap, _cap, _flow> GraphImpl;
-  typedef typename BaseGraph::nodeid nodeid;
-  typedef typename BaseGraph::arcid arcid;
-  typedef typename BaseGraph::cap cap;
-  typedef typename BaseGraph::flow flow;
+  typedef Graph<int, int, int, int> BaseGraph;
+  typedef BaseGraph::nodeid nodeid;
+  typedef BaseGraph::arcid arcid;
+  typedef BaseGraph::cap cap;
+  typedef BaseGraph::flow flow;
 
 private:
-  GraphImpl m_graph;
+  bool m_inited_graph;
+  bool m_pseudoflow_computed;
 
 public:
   /**
-   * @brief GraphBk class constructor
+   * @brief GraphHPF class constructor
    *
    * @param nnode number of nodes in the graph
    * @param narc  number of arcs in the graph
    */
-  GraphBK(nodeid nnode, arcid narc)
-      : BaseGraph(nnode, narc), m_graph(nnode, narc) {
-    m_graph.add_node(BaseGraph::m_nnode);
+  GraphHPF(nodeid nnode, arcid narc)
+      : BaseGraph(nnode, narc), m_inited_graph(false), m_pseudoflow_computed(false) {
+      allocateGraph(nnode,narc);
   }
 
   /**
@@ -74,7 +72,10 @@ public:
    * @param rcap capacity of reverse arc
    */
   void add_arc(nodeid s, nodeid t, cap fcap, cap rcap) {
-    m_graph.add_edge(s, t, fcap, rcap);
+    if (m_inited_graph) {
+      throw std::runtime_error("Initialized HPF graph: add_arc called.");
+    }
+    ::add_arc(s,t,fcap,rcap);
   }
 
   /**
@@ -84,9 +85,21 @@ public:
    * @param scap capacity of arc source -> node
    * @param tcap capacity of arc node -> sink
    */
-  void set_tweights(nodeid s, cap scap, cap tcap) {
-    m_graph.set_trcap(s,0);
-    m_graph.add_tweights(s, scap, tcap);
+  virtual void set_tweights(nodeid s, cap scap, cap tcap) {
+    if (m_inited_graph) {
+      throw std::runtime_error("Initialized HPF graph: set_tweights called.");
+    }
+    ::set_tweights(s,scap,tcap);
+  }
+
+  flow pseudoflow () {
+    if (!m_inited_graph) {
+      ::initializeGraph();
+      m_inited_graph = true;
+    }
+    flow mincut = ::pseudoflow();
+    m_pseudoflow_computed = true;
+    return mincut;
   }
 
   /**
@@ -94,7 +107,12 @@ public:
    *
    * @return the maxflow
    */
-  flow maxflow() { return m_graph.maxflow(); }
+  flow maxflow() {
+    if (!m_pseudoflow_computed) {
+      throw std::logic_error("Can not use HPF's maxflow without first computing pseudoflow.");
+    }
+    return ::maxflow_from_pseudoflow();
+  }
 
   /**
    * @brief Return which segment a node belongs to in the minimum cut
@@ -103,9 +121,7 @@ public:
    *
    * @return either 0 - indicates source segment or 1 - indicates sink segment
    */
-  bool what_segment(nodeid s) {
-    return m_graph.what_segment(s) == GraphImpl::SINK;
-  }
+  bool what_segment(nodeid s) { return ::what_segment(s); }
 };
 
 } // namespace maxflowlib
