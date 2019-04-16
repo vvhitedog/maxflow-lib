@@ -78,7 +78,7 @@ public:
    */
   void add_arc(nodeid s, nodeid t, cap fcap, cap rcap) {
     if (m_inited_graph) {
-      throw std::runtime_error("Initialized IBFS graph: add_arc called.");
+      throw std::logic_error("Initialized IBFS graph: add_arc called.");
     }
     m_graph.addEdge(s, t, fcap, rcap);
   }
@@ -92,7 +92,7 @@ public:
    */
   void set_tweights(nodeid s, cap scap, cap tcap) {
     if (m_inited_graph) {
-      throw std::runtime_error("Initialized IBFS graph: set_tweights called.");
+      throw std::logic_error("Initialized IBFS graph: set_tweights called.");
     }
     m_graph.addNode(s, scap, tcap);
   }

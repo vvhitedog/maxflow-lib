@@ -73,7 +73,7 @@ public:
    */
   void add_arc(nodeid s, nodeid t, cap fcap, cap rcap) {
     if (m_inited_graph) {
-      throw std::runtime_error("Initialized HPF graph: add_arc called.");
+      throw std::logic_error("Initialized HPF graph: add_arc called.");
     }
     ::add_arc(s,t,fcap,rcap);
   }
@@ -87,7 +87,7 @@ public:
    */
   virtual void set_tweights(nodeid s, cap scap, cap tcap) {
     if (m_inited_graph) {
-      throw std::runtime_error("Initialized HPF graph: set_tweights called.");
+      throw std::logic_error("Initialized HPF graph: set_tweights called.");
     }
     ::set_tweights(s,scap,tcap);
   }
