@@ -49,6 +49,7 @@ public:
 private:
   bool m_inited_graph;
   bool m_pseudoflow_computed;
+  bool m_use_pseudoflow_for_maxflow;
 
 public:
   /**
@@ -57,9 +58,11 @@ public:
    * @param nnode number of nodes in the graph
    * @param narc  number of arcs in the graph
    */
-  GraphHPF(nodeid nnode, arcid narc)
-      : BaseGraph(nnode, narc), m_inited_graph(false), m_pseudoflow_computed(false) {
-      allocateGraph(nnode,narc);
+  GraphHPF(nodeid nnode, arcid narc, bool use_pseudoflow_for_maxflow = true)
+      : BaseGraph(nnode, narc), m_inited_graph(false),
+        m_pseudoflow_computed(false),
+        m_use_pseudoflow_for_maxflow(use_pseudoflow_for_maxflow) {
+    allocateGraph(nnode, narc);
   }
 
   /**
@@ -75,7 +78,7 @@ public:
     if (m_inited_graph) {
       throw std::logic_error("Initialized HPF graph: add_arc called.");
     }
-    ::add_arc(s,t,fcap,rcap);
+    ::add_arc(s, t, fcap, rcap);
   }
 
   /**
@@ -89,10 +92,10 @@ public:
     if (m_inited_graph) {
       throw std::logic_error("Initialized HPF graph: set_tweights called.");
     }
-    ::set_tweights(s,scap,tcap);
+    ::set_tweights(s, scap, tcap);
   }
 
-  flow pseudoflow () {
+  flow pseudoflow() {
     if (!m_inited_graph) {
       ::initializeGraph();
       m_inited_graph = true;
@@ -108,8 +111,11 @@ public:
    * @return the maxflow
    */
   flow maxflow() {
+    if ( m_use_pseudoflow_for_maxflow && !m_pseudoflow_computed ) {
+      return pseudoflow();
+    }
     if (!m_pseudoflow_computed) {
-      throw std::logic_error("Can not use HPF's maxflow without first computing pseudoflow.");
+      pseudoflow();
     }
     return ::maxflow_from_pseudoflow();
   }

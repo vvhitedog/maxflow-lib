@@ -148,8 +148,8 @@ public:
 	struct Arc;
 	void incArc(Arc *a, int deltaCap);
 	void initGraph();
-	int computeMaxFlow();
-	int computeMaxFlow(bool allowIncrements);
+	unsigned long long computeMaxFlow();
+	unsigned long long computeMaxFlow(bool allowIncrements);
 	void resetTrees();
 	void computeMinMarginals();
 	void pushRelabel();
@@ -161,7 +161,7 @@ public:
 	inline IBFSStats getStats() {
 		return stats;
 	}
-	inline int getFlow() {
+	inline unsigned long long getFlow() {
 		return flow;
 	}
 	inline int getNumNodes() {
@@ -212,7 +212,7 @@ private:
 	template <bool sTree> void adoption3Pass(int minBucket);
 	template <bool dirS> void growth();
 
-	int computeMaxFlow(bool trackChanges, bool initialDirS);
+	unsigned long long computeMaxFlow(bool trackChanges, bool initialDirS);
 	void resetTrees(int newTopLevelS, int newTopLevelT);
 
 	// push relabel
@@ -467,7 +467,7 @@ private:
 	Arc		*arcs, *arcEnd;
 	Node	**ptrs;
 	int 	numNodes;
-	int		flow;
+	unsigned long long		flow;
 	short 	augTimestamp;
 	int topLevelS, topLevelT;
 	ActiveList active0, activeS1, activeT1;

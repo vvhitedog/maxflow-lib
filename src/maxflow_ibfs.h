@@ -31,8 +31,6 @@
 #include "maxflow.h"
 #include <stdexcept>
 
-using GraphImplType = IBFSGraph;
-
 namespace maxflowlib {
 
 template <typename _nodeid = int, typename _arcid = int, typename _cap = int,
@@ -43,6 +41,7 @@ template <>
 class GraphIBFS<int, int, int, int> : public Graph<int, int, int, int> {
 
 public:
+  using GraphImplType = ::IBFSGraph;
   typedef Graph<int, int, int, int> BaseGraph;
   typedef GraphImplType GraphImpl;
   typedef BaseGraph::nodeid nodeid;
@@ -52,7 +51,6 @@ public:
 
 private:
   GraphImpl m_graph;
-  bool m_inited_graph;
 
 public:
   /**
@@ -62,8 +60,7 @@ public:
    * @param narc  number of arcs in the graph
    */
   GraphIBFS(nodeid nnode, arcid narc)
-      : BaseGraph(nnode, narc), m_graph(IBFSGraph::IB_INIT_COMPACT),
-        m_inited_graph(false) {
+      : BaseGraph(nnode, narc), m_graph(::IBFSGraph::IB_INIT_FAST) {
     m_graph.initSize(nnode, narc);
   }
 
@@ -77,9 +74,6 @@ public:
    * @param rcap capacity of reverse arc
    */
   void add_arc(nodeid s, nodeid t, cap fcap, cap rcap) {
-    if (m_inited_graph) {
-      throw std::logic_error("Initialized IBFS graph: add_arc called.");
-    }
     m_graph.addEdge(s, t, fcap, rcap);
   }
 
@@ -91,9 +85,6 @@ public:
    * @param tcap capacity of arc node -> sink
    */
   void set_tweights(nodeid s, cap scap, cap tcap) {
-    if (m_inited_graph) {
-      throw std::logic_error("Initialized IBFS graph: set_tweights called.");
-    }
     m_graph.addNode(s, scap, tcap);
   }
 
@@ -103,10 +94,7 @@ public:
    * @return the maxflow
    */
   flow maxflow() {
-    if (!m_inited_graph) {
-      m_graph.initGraph();
-      m_inited_graph = true;
-    }
+    m_graph.initGraph();
     return m_graph.computeMaxFlow();
   }
 

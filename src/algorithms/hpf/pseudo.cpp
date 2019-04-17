@@ -37,6 +37,7 @@
 #include <sys/time.h>
 #include <sys/resource.h>
 #include <stdlib.h>
+#include <stdexcept>
 
 #include "pseudo.h"
 
@@ -195,11 +196,10 @@ void allocateGraph(uint _numNodes, uint _numArcs) {
   // - source
   // - sink
   numNodes = _numNodes + 2;
-  // for arcs we need to account for two factors:
-  // 1. expect twice as many arcs in the residual graph
-  // 2. expect one arc for each node to connect to source or sink
-  numArcs = 2 * _numArcs + _numNodes;
-  numRealArcs = 2 * _numArcs;
+  // for arcs we need to account for:
+  // 1. expect one arc for each node to connect to source or sink
+  numArcs = _numArcs + _numNodes;
+  numRealArcs = _numArcs;
   if ((adjacencyList = (Node *)malloc(numNodes * sizeof(Node))) == NULL) {
     printf("%s, %d: Could not allocate memory.\n", __FILE__, __LINE__);
     exit(1);
@@ -233,16 +233,24 @@ void allocateGraph(uint _numNodes, uint _numArcs) {
 
 void add_arc(uint from, uint to, uint fcap, uint rcap) {
 
-  arcList[countArcs].from = &adjacencyList[from + 2];
-  arcList[countArcs].to = &adjacencyList[to + 2];
-  arcList[countArcs].capacity = fcap;
-  countArcs++;
-  ++adjacencyList[from + 2].numAdjacent;
-  ++adjacencyList[to + 2].numAdjacent;
+  if (fcap == 0 && rcap == 0) {
+    return;
+  }
 
-  arcList[countArcs].to = &adjacencyList[to + 2];
-  arcList[countArcs].from = &adjacencyList[from + 2];
-  arcList[countArcs].capacity = rcap;
+  if (fcap > 0 && rcap > 0) {
+    throw std::logic_error(
+        "HPF can not support both fcap and rcap > 0 on a given arc.");
+  }
+
+  if (fcap > 0) {
+    arcList[countArcs].from = &adjacencyList[from + 2];
+    arcList[countArcs].to = &adjacencyList[to + 2];
+    arcList[countArcs].capacity = fcap;
+  } else if (rcap > 0) {
+    arcList[countArcs].from = &adjacencyList[to + 2];
+    arcList[countArcs].to = &adjacencyList[from + 2];
+    arcList[countArcs].capacity = rcap;
+  }
   countArcs++;
   ++adjacencyList[from + 2].numAdjacent;
   ++adjacencyList[to + 2].numAdjacent;
@@ -280,21 +288,24 @@ void set_tweights(uint id, uint source_cap, uint sink_cap) {
 }
 
 void simpleInitialization(void) {
-  uint i, size;
+  uint i, size, resflow;
   Arc *tempArc;
 
   size = adjacencyList[source - 1].numOutOfTree;
   for (i = 0; i < size; ++i) {
     tempArc = adjacencyList[source - 1].outOfTree[i];
-    tempArc->flow = tempArc->capacity;
-    tempArc->to->excess += tempArc->capacity;
+    resflow = tempArc->capacity; //tempArc->capacity - tempArc->flow;
+    tempArc->flow = resflow;
+    tempArc->to->excess += resflow;
   }
 
   size = adjacencyList[sink - 1].numOutOfTree;
   for (i = 0; i < size; ++i) {
     tempArc = adjacencyList[sink - 1].outOfTree[i];
-    tempArc->flow = tempArc->capacity;
-    tempArc->from->excess -= tempArc->capacity;
+    //resflow = tempArc->capacity - tempArc->flow;
+    resflow = tempArc->capacity; //tempArc->capacity - tempArc->flow;
+    tempArc->flow = resflow;
+    tempArc->from->excess -= resflow;
   }
 
   adjacencyList[source - 1].excess = 0;
@@ -323,6 +334,9 @@ void initializeGraph() {
   }
 
   for (i = 0; i < numArcs; i++) {
+    if (!arcList[i].to) {
+      continue;
+    }
     to = arcList[i].to->number;
     from = arcList[i].from->number;
     capacity = arcList[i].capacity;
@@ -707,6 +721,9 @@ static ullint get_mincut(const uint gap) {
   ullint mincut = 0;
   uint i;
   for (i = 0; i < numArcs; ++i) {
+    if (!arcList[i].to) {
+      continue;
+    }
     if ((arcList[i].from->label >= gap) && (arcList[i].to->label < gap)) {
       mincut += arcList[i].capacity;
     }
@@ -730,6 +747,9 @@ static uint checkOptimality(const uint gap) {
   }
 
   for (i = 0; i < numArcs; ++i) {
+    if (!arcList[i].to) {
+      continue;
+    }
     if ((arcList[i].from->label >= gap) && (arcList[i].to->label < gap)) {
       mincut += arcList[i].capacity;
     }
@@ -1038,7 +1058,7 @@ ullint maxflow_from_pseudoflow() {
 
   recoverFlow(gap);
 
-  return checkOptimality(numNodes);
+  return mincut;
 }
 
 int what_segment(uint id) { return adjacencyList[id].label < numNodes; }

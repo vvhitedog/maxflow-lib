@@ -29,9 +29,6 @@
 #include "algorithms/bk/graph.h"
 #include "maxflow.h"
 
-template <typename cap, typename tcap, typename flow>
-using GraphImplType = Graph<cap, tcap, flow>;
-
 namespace maxflowlib {
 
 template <typename _nodeid = int, typename _arcid = int, typename _cap = int,
@@ -42,6 +39,8 @@ template <typename _cap, typename _flow>
 class GraphBK<int, int, _cap, _flow> : public Graph<int, int, _cap, _flow> {
 
 public:
+  template <typename cap, typename tcap, typename flow>
+  using GraphImplType = ::Graph<cap, tcap, flow>;
   typedef Graph<int, int, _cap, _flow> BaseGraph;
   typedef GraphImplType<_cap, _cap, _flow> GraphImpl;
   typedef typename BaseGraph::nodeid nodeid;
@@ -85,7 +84,7 @@ public:
    * @param tcap capacity of arc node -> sink
    */
   void set_tweights(nodeid s, cap scap, cap tcap) {
-    m_graph.set_trcap(s,0);
+    m_graph.set_trcap(s, 0);
     m_graph.add_tweights(s, scap, tcap);
   }
 

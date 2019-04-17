@@ -929,17 +929,17 @@ template<bool sTree> void IBFSGraph::augmentIncrements()
 }
 
 
-int IBFSGraph::computeMaxFlow()
+unsigned long long IBFSGraph::computeMaxFlow()
 {
 	return computeMaxFlow(true, false);
 }
 
-int IBFSGraph::computeMaxFlow(bool allowIncrements)
+unsigned long long IBFSGraph::computeMaxFlow(bool allowIncrements)
 {
 	return computeMaxFlow(true, allowIncrements);
 }
 
-int IBFSGraph::computeMaxFlow(bool initialDirS, bool allowIncrements)
+unsigned long long IBFSGraph::computeMaxFlow(bool initialDirS, bool allowIncrements)
 {
 	// incremental?
 	if (incIteration >= 1 && incList != NULL) {

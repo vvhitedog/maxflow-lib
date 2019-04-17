@@ -342,6 +342,10 @@ private:
 	void reallocate_nodes(int num); // num is the number of new nodes
 	void reallocate_arcs();
 
+	void maxflow_init();             // called if reuse_trees == false
+	void maxflow_reuse_trees_init(); // called if reuse_trees == true
+
+
 	// functions for processing active list
 	void set_active(node *i);
 	node *next_active();
@@ -352,8 +356,6 @@ private:
 
 	void add_to_changed_list(node* i);
 
-	void maxflow_init();             // called if reuse_trees == false
-	void maxflow_reuse_trees_init(); // called if reuse_trees == true
 	void augment(arc *middle_arc);
 	void process_source_orphan(node *i);
 	void process_sink_orphan(node *i);
