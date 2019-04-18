@@ -210,8 +210,6 @@ template <typename Graph> int compute_maxflow(const std::string &filename) {
   int flow;
   auto *g = read_dimacs<Graph>(filename);
   util::Timer maxflow_timer;
-  // For benchmarking run maxflow twice, ignoring first run as there be an
-  // initialization that slows things significantly
   maxflow_timer.tic();
   flow = g->maxflow();
   maxflow_timer.toc();
@@ -232,7 +230,7 @@ void benchmark_maxflow(const std::string &filename) {
   using maxflowlib::GraphIBFS;
   using maxflowlib::GraphHPF;
 
-  //int bk_maxflow = compute_maxflow<GraphBK<int, int, int, int> >(filename);
+  int bk_maxflow = compute_maxflow<GraphBK<int, int, int, int> >(filename);
   int ibfs_maxflow = compute_maxflow<GraphIBFS<int, int, int, int> >(filename);
   int hpf_maxflow = compute_maxflow<GraphHPF<int, int, int, int> >(filename);
 }
