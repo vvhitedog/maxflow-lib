@@ -71,7 +71,6 @@ public:
       g.set_tweights(m_s - 3, 0, m_cap);
     } else {
       g.add_arc(m_s - 3, m_t - 3, m_cap, 0);
-      //g.add_arc(m_t - 3, m_s - 3, 0, m_cap);
     }
   }
 
@@ -120,7 +119,6 @@ template <typename Graph> Graph *read_dimacs(const std::string &filename) {
         std::fprintf(stderr, err_msg.c_str());
         std::exit(EXIT_FAILURE);
       }
-      // g = new Graph(n - 2, m);
       break;
     case 'a':
       if (source == -1 || sink == -1) {
