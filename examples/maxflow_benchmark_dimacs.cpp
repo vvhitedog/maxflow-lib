@@ -141,7 +141,9 @@ template <typename Graph> Graph *read_dimacs(const std::string &filename) {
         std::fprintf(stderr, err_msg.c_str());
         std::exit(EXIT_FAILURE);
       }
-      arcs_to_add.emplace_back(s, t, cap, 0);
+      if ( cap > 0 ) {
+        arcs_to_add.emplace_back(s, t, cap, 0);
+      }
       break;
     case 'n':
       if (sscanf(line, "%*c %d %c", &s, &c) != 2) {
