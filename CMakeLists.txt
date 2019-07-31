@@ -25,18 +25,21 @@
 #
 cmake_minimum_required(VERSION 2.8)
 
-set(PROJECT_VERSION 1.0.0)
-
-if (VERSION GREATER 2.8)
-  project(maxflow-lib VERSION ${PROJECT_VERSION} DESCRIPTION "Performant maxflow algorithms under common interface.")
+if (${CMAKE_VERSION} VERSION_GREATER 2.8)
+  project(maxflow-lib DESCRIPTION "Performant maxflow algorithms under common interface.")
 else ()
   project(maxflow-lib)
 endif ()
 
+set(PROJECT_VERSION_MAJOR 1)
+set(PROJECT_VERSION_MINOR 0)
+set(PROJECT_VERSION_PATCH 0)
+set(PROJECT_VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH} )
+
 include(GNUInstallDirs)
 
 # Set standard to c++11
-if (VERSION GREATER 2.8)
+if (${CMAKE_VERSION} VERSION_GREATER 2.8)
   set(CMAKE_CXX_STANDARD 11)
   set(CMAKE_CXX_STANDARD_REQUIRED ON)
 else ()
@@ -57,7 +60,7 @@ target_include_directories(maxflow PRIVATE ${MAXFLOWLIB_SRC})
 # Install setup:
 set_target_properties(maxflow PROPERTIES
   VERSION ${PROJECT_VERSION}
-  SOVERSION 1
+  SOVERSION ${PROJECT_VERSION_MAJOR}
   PUBLIC_HEADER "${MAXFLOWLIB_HEADERS}")
 install(TARGETS maxflow
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
