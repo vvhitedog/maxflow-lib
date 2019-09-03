@@ -58,7 +58,7 @@ public:
    * @param nnode number of nodes in the graph
    * @param narc  number of arcs in the graph
    */
-  GraphHPF(nodeid nnode, arcid narc, bool use_pseudoflow_for_maxflow = true)
+  GraphHPF(nodeid nnode, arcid narc, bool use_pseudoflow_for_maxflow = false)
       : BaseGraph(nnode, narc), m_inited_graph(false),
         m_pseudoflow_computed(false),
         m_use_pseudoflow_for_maxflow(use_pseudoflow_for_maxflow) {

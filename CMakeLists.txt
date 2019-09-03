@@ -89,3 +89,19 @@ set(BENCHMARK_EXE_SRCS examples/maxflow_benchmark_dimacs.cpp ${UTIL_SRCS})
 add_executable(maxflow_benchmark_dimacs ${BENCHMARK_EXE_SRCS})
 target_include_directories(maxflow_benchmark_dimacs PRIVATE ${MAXFLOWLIB_SRC})
 target_link_libraries(maxflow_benchmark_dimacs maxflow)
+
+# Compile the create_wrapped_gaussian binary
+set(PU_GAUSS_EXE_SRCS examples/phase_unwrapping/create_wrapped_gaussian.cpp)
+add_executable(create_wrapped_gaussian ${PU_GAUSS_EXE_SRCS})
+target_include_directories(create_wrapped_gaussian PRIVATE ${MAXFLOWLIB_SRC})
+
+# Compile the py_visualize_gaussian binary
+set(PU_VIS_GAUSS_EXE_SRCS examples/phase_unwrapping/py_visualize_gaussian.cpp)
+add_executable(py_visualize_gaussian ${PU_VIS_GAUSS_EXE_SRCS})
+target_include_directories(py_visualize_gaussian PRIVATE ${MAXFLOWLIB_SRC})
+
+# Compile the py_visualize_gaussian binary
+set(PU_UNW_GAUSS_EXE_SRCS examples/phase_unwrapping/unwrap_gaussian.cpp ${UTIL_SRCS})
+add_executable(unwrap_gaussian ${PU_UNW_GAUSS_EXE_SRCS})
+target_include_directories(unwrap_gaussian PRIVATE ${MAXFLOWLIB_SRC})
+target_link_libraries(unwrap_gaussian maxflow)
