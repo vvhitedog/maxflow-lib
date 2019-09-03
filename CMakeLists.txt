@@ -25,21 +25,20 @@
 #
 cmake_minimum_required(VERSION 2.8)
 
-if (${CMAKE_VERSION} VERSION_GREATER 2.8)
-  project(maxflow-lib DESCRIPTION "Performant maxflow algorithms under common interface.")
-else ()
-  project(maxflow-lib)
-endif ()
+project(maxflow-lib)
 
 set(PROJECT_VERSION_MAJOR 1)
 set(PROJECT_VERSION_MINOR 0)
 set(PROJECT_VERSION_PATCH 0)
 set(PROJECT_VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH} )
+set(PROJECT_AUTHOR Matt Gara )
+set(PROJECT_AUTHOR_EMAIL gara.matt@gmail.com )
+set(PROJECT_DESCRIPTION  "Performant maxflow algorithms under common interface.")
 
 include(GNUInstallDirs)
 
 # Set standard to c++11
-if (${CMAKE_VERSION} VERSION_GREATER 2.8)
+if (${CMAKE_VERSION} VERSION_GREATER 3.0)
   set(CMAKE_CXX_STANDARD 11)
   set(CMAKE_CXX_STANDARD_REQUIRED ON)
 else ()
