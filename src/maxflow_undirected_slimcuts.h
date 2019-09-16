@@ -304,8 +304,6 @@ public:
     }
   }
 
-  //  void test_contraction() { contract_graph(); }
-
   flow maxflow() {
 
     contract_graph();

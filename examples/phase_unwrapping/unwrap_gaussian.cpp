@@ -99,23 +99,23 @@ void solve_unwrapping_problem(int npt, const int_vector &arcs,
         std::swap(s, t);
         shifted_amb = -shifted_amb;
       }
+//        int wgt = 100 + (std::rand() % 100); // random
+        int wgt = 1; // uniform
       if (shifted_amb == 0) {
-        int wgt = 100 + (std::rand() % 10000); // random
-//        int wgt = 1; // random
 #ifdef USE_DIRECTED
         graph.add_arc(s, t, wgt, wgt );
 #else
         graph.add_arc(s, t, wgt);
 #endif
       } else if (shifted_amb > 0) {
-        tweights[s] += 1;
-        tweights[t] -= 1;
+        tweights[s] += wgt;
+        tweights[t] -= wgt;
       }
     }
     for (int i = 0; i < npt; ++i) {
       int tw = tweights[i];
-      if (std::abs(tw) > 1)
-        //        fprintf(stderr,"tw=%d\n",tw);
+//      if (std::abs(tw) > 1)
+//                fprintf(stderr,"tw=%d\n",tw);
         if (tw > 0) {
           graph.set_tweights(i, tw, 0);
         } else if (tw < 0) {
@@ -145,6 +145,7 @@ void solve_unwrapping_problem(int npt, const int_vector &arcs,
       break;
     }
   }
+  fprintf(stderr, "iter #=%ld\n", iter);
 }
 
 int main(int argc, char *argv[]) {
