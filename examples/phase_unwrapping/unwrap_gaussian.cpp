@@ -75,7 +75,7 @@ void create_unwrapping_problem(const real_vector &wr, const int_vector &arcs,
 template <typename int_vector, typename Graph>
 void solve_unwrapping_problem(int npt, const int_vector &arcs,
                               const int_vector &ambig, int_vector &x) {
-  x.resize(npt, 0);
+  x.resize(npt, -20);
 
   size_t narc = arcs.size() / 2;
 
@@ -100,7 +100,7 @@ void solve_unwrapping_problem(int npt, const int_vector &arcs,
         shifted_amb = -shifted_amb;
       }
 //        int wgt = 100 + (std::rand() % 100); // random
-        int wgt = 1; // uniform
+        int wgt = 12; // uniform
       if (shifted_amb == 0) {
 #ifdef USE_DIRECTED
         graph.add_arc(s, t, wgt, wgt );
@@ -114,13 +114,18 @@ void solve_unwrapping_problem(int npt, const int_vector &arcs,
     }
     for (int i = 0; i < npt; ++i) {
       int tw = tweights[i];
-//      if (std::abs(tw) > 1)
-//                fprintf(stderr,"tw=%d\n",tw);
-        if (tw > 0) {
-          graph.set_tweights(i, tw, 0);
-        } else if (tw < 0) {
-          graph.set_tweights(i, 0, -tw);
-        }
+
+      // add preference for a certain ambiguity
+      const int wgt = 1;
+      const int pref_amb = -5;
+      int shifted_amb = pref_amb - x[i];
+      tw += wgt*std::abs(1-shifted_amb);
+      tw += -wgt*std::abs(0-shifted_amb);
+      if (tw > 0) {
+        graph.set_tweights(i, tw, 0);
+      } else if (tw < 0) {
+        graph.set_tweights(i, 0, -tw);
+      }
     }
     //    graph.test_contraction();
     timer_setup.toc();
@@ -140,7 +145,7 @@ void solve_unwrapping_problem(int npt, const int_vector &arcs,
         something_source = true;
       }
     }
-    bool something_changed = something_sink && something_source;
+    bool something_changed = something_sink;
     if (!something_changed) {
       break;
     }
