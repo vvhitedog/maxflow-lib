@@ -99,8 +99,8 @@ void solve_unwrapping_problem(int npt, const int_vector &arcs,
         std::swap(s, t);
         shifted_amb = -shifted_amb;
       }
-//        int wgt = 100 + (std::rand() % 100); // random
-        int wgt = 1; // uniform
+//        int wgt = 10000 + (std::rand() % 100); // random
+        int wgt = 1000; // uniform
       if (shifted_amb == 0) {
 #ifdef USE_DIRECTED
         graph.add_arc(s, t, wgt, wgt );

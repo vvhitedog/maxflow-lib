@@ -34,6 +34,9 @@
 #include <vector>
 
 #include <cassert>
+#include "util/timer.h"
+
+#define USE_PROBABILISTIC_CONTRACTION 1
 
 namespace maxflowlib {
 
@@ -112,6 +115,25 @@ private:
     //    fprintf(stderr," clearing map of %d\n", u);
   }
 
+  bool contract_node2(nodeid u, double cutoff = 1.) {
+    adjacency_map &umap = m_adj[u];
+    for (auto &it : umap) {
+      nodeid v = it.first;
+      flow f = it.second;
+      flow ff = 0;
+      if ( v == SINKID || v == SOURCEID ) {
+          ff = m_total_cap_at_node[u]-f;
+      } else {
+          ff = std::min(m_total_cap_at_node[u]-f,m_total_cap_at_node[v]-f);
+      }
+      if (ff/double(f) < cutoff) {
+        contract_edge(std::min(u, v), std::max(u, v));
+        return true;
+      }
+    }
+    return false;
+  }
+
   bool contract_node(nodeid u) {
     flow total_cap = m_total_cap_at_node[u];
     adjacency_map &umap = m_adj[u];
@@ -126,6 +148,42 @@ private:
       }
     }
     return false;
+  }
+
+  void contract_graph2() {
+    init_graph_contraction();
+    nodeid num_contracted = 0;
+    bool change;
+    double cutoffs[] = {1.,1.1,1.2,1.3,1.4,1.5,};
+//    double cutoffs[] = {1.,};
+    int ncutoffs = sizeof(cutoffs) / sizeof(double);
+
+    for ( int icutoff = 0; icutoff < ncutoffs; ++icutoff ) {
+      double cutoff = cutoffs[icutoff];
+      do {
+        change = false;
+        for (nodeid id = 0; id < BaseGraph::m_nnode - 2; ++id) {
+          if (m_super_node[id] == id) { // is a supernode
+            bool success = contract_node2(id,cutoff);
+            change |= success;
+            if (success) {
+              num_contracted++;
+            }
+          }
+        }
+      } while (change);
+    }
+
+    fprintf(stderr, "number contracted: %d\n", num_contracted);
+    nodeid num_supernode = 0;
+    for (nodeid id = 0; id < BaseGraph::m_nnode; ++id) {
+      if (m_super_node[id] == id) { // is a supernode
+        num_supernode++;
+      }
+    }
+
+    fprintf(stderr, "number supernode: %d\n", num_supernode);
+    fprintf(stderr, "number original: %d\n", BaseGraph::m_nnode);
   }
 
   void contract_graph() {
@@ -306,7 +364,11 @@ public:
 
   flow maxflow() {
 
+#if USE_PROBABILISTIC_CONTRACTION == 0
     contract_graph();
+#else
+    contract_graph2();
+#endif
     resolve_super_nodes();
 
     nodeid num_node = count_supernodes() - 2; // don't count source/sink
@@ -322,9 +384,13 @@ public:
 
     simplify_st_arcs();
 
+    util::Timer timer_real_maxflow;
     GraphMaxflow graph(num_node, num_arc);
     add_arcs(graph);
+    timer_real_maxflow.tic();
     flow f = graph.maxflow();
+    timer_real_maxflow.toc();
+    fprintf(stderr, "real_maxflow_time: %f\n", timer_real_maxflow.elapsed_seconds());
 
     get_what_segments(graph);
 
